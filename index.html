@@ -53,6 +53,13 @@
       text-transform: uppercase;
     }
 
+    .label-info {
+      font-weight: normal;
+      font-size: 12px;
+      color: var(--cinza-medio);
+      text-transform: none;
+    }
+
     input, select, textarea {
       width: 100%;
       padding: 12px;
@@ -62,8 +69,14 @@
       border: 1px solid var(--cinza-medio);
       border-radius: 6px;
       transition: all 0.3s;
+    }
+
+    input.uppercase {
       text-transform: uppercase;
-      background-color: rgba(255, 255, 255, 0.9);
+    }
+
+    input.numeric {
+      text-transform: none;
     }
 
     #senha, #observacao {
@@ -157,6 +170,17 @@
       margin-top: 5px;
     }
 
+    .error {
+      border-color: #ff0000 !important;
+    }
+
+    .error-message {
+      color: #ff0000;
+      font-size: 12px;
+      margin-top: 5px;
+      display: none;
+    }
+
     @media (max-width: 600px) {
       .button-group, .location-buttons {
         flex-direction: column;
@@ -188,37 +212,51 @@
     </select>
 
     <label for="nome">Nome do Cliente</label>
-    <input type="text" id="nome" placeholder="Digite o nome completo" oninput="this.value = this.value.toUpperCase()">
+    <input type="text" id="nome" class="uppercase" placeholder="Digite o nome completo" pattern="[A-Za-zÀ-ú\s]+" title="Somente letras são permitidas">
+    <div class="error-message" id="nome-error">Somente letras são permitidas</div>
 
     <label for="os">Nº da OS</label>
-    <input type="text" id="os" placeholder="Número da ordem de serviço" oninput="this.value = this.value.toUpperCase()">
+    <input type="text" id="os" class="numeric" placeholder="Número da ordem de serviço" pattern="\d{6}" title="Digite exatamente 6 dígitos numéricos">
+    <div class="error-message" id="os-error">Digite exatamente 6 dígitos</div>
 
     <label for="isp">ISP / ID</label>
-    <input type="text" id="isp" placeholder="Identificação do ISP" oninput="this.value = this.value.toUpperCase()">
+    <input type="text" id="isp" class="numeric" placeholder="Identificação do ISP" pattern="\d{6}" title="Digite exatamente 6 dígitos numéricos">
+    <div class="error-message" id="isp-error">Digite exatamente 6 dígitos</div>
 
     <label for="plano">Plano</label>
-    <input type="text" id="plano" placeholder="Plano contratado" oninput="this.value = this.value.toUpperCase()">
+    <input type="text" id="plano" class="numeric" placeholder="Plano contratado" pattern="\d+" title="Somente números são permitidos">
+    <div class="error-message" id="plano-error">Somente números são permitidos</div>
 
     <label for="pon">PON</label>
-    <input type="text" id="pon" placeholder="Número da PON" oninput="this.value = this.value.toUpperCase()">
+    <input type="text" id="pon" class="uppercase" placeholder="Ultimos 4 digitos">
 
     <label for="onu">ONU</label>
-    <input type="text" id="onu" placeholder="Modelo da ONU" oninput="this.value = this.value.toUpperCase()">
+    <input type="text" id="onu" class="uppercase" placeholder="Modelo da ONU">
 
     <label for="sinal">Sinal</label>
-    <input type="number" id="sinal" placeholder="Sinal dBm" step="0.01">
+    <input type="number" id="sinal" class="numeric" placeholder="Valor do sinal dBm" step="0.01">
 
     <label for="wifi">Nome da Rede (Wi-Fi)</label>
-    <input type="text" id="wifi" placeholder="Nome da rede Wi-Fi" oninput="this.value = this.value.toUpperCase()">
+    <input type="text" id="wifi" class="uppercase" placeholder="WKVE-" value="WKVE-" oninput="formatarWifi()">
+    <div class="error-message" id="wifi-error">O nome deve começar com WKVE-</div>
 
     <label for="senha">Senha do Wi-Fi</label>
-    <input type="text" id="senha" placeholder="Senha da rede Wi-Fi">
+    <input type="text" id="senha" placeholder="Senha da rede Wi-Fi" minlength="8" maxlength="16">
+    <div class="error-message" id="senha-error">A senha deve ter entre 8 e 16 caracteres</div>
 
     <label for="olt">OLT</label>
-    <input type="text" id="olt" placeholder="OLT alocada" oninput="this.value = this.value.toUpperCase()">
+    <select id="olt">
+      <option value="">Selecione</option>
+      <option value="OLT1">OLT 1 - CENTRO</option>
+      <option value="OLT2">OLT 2 - ZONA NORTE</option>
+      <option value="OLT3">OLT 3 - ZONA SUL</option>
+      <option value="OLT4">OLT 4 - ZONA LESTE</option>
+      <option value="OLT5">OLT 5 - ZONA OESTE</option>
+    </select>
 
     <label for="cto">CTO</label>
-    <input type="text" id="cto" placeholder="Nome da CTO" oninput="this.value = this.value.toUpperCase()">
+    <span class="label-info">Informações sobre contagem de porta: <a href="https://devgpon.wkve.net.br/tecnico/manual_cto.pdf" target="_blank">Manual CTO</a></span>
+    <input type="text" id="cto" class="uppercase" placeholder="Nome da CTO" autocomplete="off">
 
     <label for="localizacaoCTO">Localização da CTO</label>
     <div class="location-buttons">
@@ -229,20 +267,38 @@
     <a id="mapLink" href="#" target="_blank" style="display:none;"><i class="fas fa-map-marked-alt"></i> Ver no Mapa</a>
 
     <label for="porta">Porta</label>
-    <input type="text" id="porta" placeholder="Porta utilizada na CTO" oninput="this.value = this.value.toUpperCase()">
+    <select id="porta">
+      <option value="">Selecione</option>
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+      <option value="7">7</option>
+      <option value="8">8</option>
+      <option value="9">9</option>
+      <option value="10">10</option>
+      <option value="11">11</option>
+      <option value="12">12</option>
+      <option value="13">13</option>
+      <option value="14">14</option>
+      <option value="15">15</option>
+      <option value="16">16</option>
+    </select>
 
     <label for="endereco">Endereço</label>
-    <textarea id="endereco" placeholder="Endereço completo do cliente" oninput="this.value = this.value.toUpperCase()"></textarea>
+    <textarea id="endereco" class="uppercase" placeholder="Endereço completo do cliente"></textarea>
 
     <label for="tecnico">Técnico Responsável</label>
-    <input type="text" id="tecnico" placeholder="Seu nome" oninput="this.value = this.value.toUpperCase()">
+    <input type="text" id="tecnico" class="uppercase" placeholder="Seu nome">
 
     <label for="material">Materiais Utilizados</label>
-    <textarea id="material" placeholder="Liste os materiais utilizados" oninput="this.value = this.value.toUpperCase()"></textarea>
+    <textarea id="material" class="uppercase" placeholder="Liste os materiais utilizados"></textarea>
 
     <div id="recolhidoContainer" class="hidden">
       <label for="materialRecolhido">Material Recolhido</label>
-      <textarea id="materialRecolhido" placeholder="Liste os materiais recolhidos" oninput="this.value = this.value.toUpperCase()"></textarea>
+      <textarea id="materialRecolhido" class="uppercase" placeholder="Liste os materiais recolhidos"></textarea>
     </div>
 
     <label for="observacao">Observações</label>
@@ -263,7 +319,124 @@
     <div id="resultado"></div>
   </div>
 
-  <script>
+ <script>
+    // Funções para restringir entrada de caracteres (funciona em mobile e desktop)
+    function setupInputRestrictions() {
+      // Campo que aceita apenas letras
+      const nomeInput = document.getElementById('nome');
+      nomeInput.addEventListener('input', function() {
+        this.value = this.value.replace(/[^A-Za-zÀ-Úà-ú\s]/g, '');
+        validateLettersOnly(this, 'nome-error');
+      });
+      
+      // Campos que aceitam apenas números com limite de caracteres
+      const numericInputs = {
+        'os': 6,
+        'isp': 6,
+        'plano': null // Sem limite de caracteres
+      };
+      
+      Object.keys(numericInputs).forEach(id => {
+        const input = document.getElementById(id);
+        const maxLength = numericInputs[id];
+        
+        input.addEventListener('input', function() {
+          // Remove tudo que não for número
+          this.value = this.value.replace(/\D/g, '');
+          
+          // Aplica limite de caracteres se especificado
+          if (maxLength && this.value.length > maxLength) {
+            this.value = this.value.slice(0, maxLength);
+          }
+          
+          // Validação específica para cada campo
+          if (id === 'os' || id === 'isp') {
+            validateNumericLength(this, id + '-error', maxLength);
+          } else {
+            validateNumbersOnly(this, id + '-error');
+          }
+        });
+      });
+    }
+
+    // Chamar a função quando o DOM estiver carregado
+    document.addEventListener('DOMContentLoaded', function() {
+      setupInputRestrictions();
+      
+      // Configurar outras validações
+      document.getElementById('senha').addEventListener('input', function() {
+        validatePassword(this, 'senha-error');
+      });
+
+      document.getElementById('wifi').addEventListener('input', function() {
+        validateWifi(this, 'wifi-error');
+      });
+    });
+
+    // Funções de validação
+    function validateLettersOnly(input, errorId) {
+      const errorElement = document.getElementById(errorId);
+      if (/[^A-Za-zÀ-ú\s]/.test(input.value)) {
+        input.classList.add('error');
+        errorElement.style.display = 'block';
+      } else {
+        input.classList.remove('error');
+        errorElement.style.display = 'none';
+      }
+    }
+
+    function validateNumericLength(input, errorId, length) {
+      const errorElement = document.getElementById(errorId);
+      if (!/^\d*$/.test(input.value) || (length && input.value.length > length)) {
+        input.classList.add('error');
+        errorElement.style.display = 'block';
+      } else {
+        input.classList.remove('error');
+        errorElement.style.display = 'none';
+      }
+    }
+
+    function validateNumbersOnly(input, errorId) {
+      const errorElement = document.getElementById(errorId);
+      if (!/^\d*$/.test(input.value)) {
+        input.classList.add('error');
+        errorElement.style.display = 'block';
+      } else {
+        input.classList.remove('error');
+        errorElement.style.display = 'none';
+      }
+    }
+
+    function validatePassword(input, errorId) {
+      const errorElement = document.getElementById(errorId);
+      if (input.value.length < 8 || input.value.length > 16) {
+        input.classList.add('error');
+        errorElement.style.display = 'block';
+      } else {
+        input.classList.remove('error');
+        errorElement.style.display = 'none';
+      }
+    }
+
+    function validateWifi(input, errorId) {
+      const errorElement = document.getElementById(errorId);
+      if (!input.value.startsWith('WKVE-')) {
+        input.classList.add('error');
+        errorElement.style.display = 'block';
+      } else {
+        input.classList.remove('error');
+        errorElement.style.display = 'none';
+      }
+    }
+
+    function formatarWifi() {
+      const wifiInput = document.getElementById('wifi');
+      if (!wifiInput.value.startsWith('WKVE-')) {
+        wifiInput.value = 'WKVE-' + wifiInput.value.replace('WKVE-', '');
+      }
+      wifiInput.value = wifiInput.value.toUpperCase();
+    }
+
     // Garante que o sinal sempre seja negativo
     document.getElementById('sinal').addEventListener('input', function() {
       let value = this.value;
@@ -327,6 +500,11 @@
       const get = id => document.getElementById(id).value.trim();
       const timestamp = new Date().toLocaleString('pt-BR');
 
+      // Verificar campos obrigatórios
+      if (!validarCampos()) {
+        return false;
+      }
+
       let mensagem = "*RELATÓRIO TÉCNICO WKVE*\n\n";
       
       // Informações básicas
@@ -363,31 +541,79 @@
       return mensagem;
     }
 
+    function validarCampos() {
+      let isValid = true;
+      
+      // Verificar cada campo obrigatório
+      const requiredFields = [
+        'atividade', 'nome', 'os', 'isp', 'plano', 'wifi', 'senha',
+        'olt', 'cto', 'porta', 'endereco', 'tecnico'
+      ];
+      
+      requiredFields.forEach(field => {
+        const element = document.getElementById(field);
+        if (!element.value.trim()) {
+          element.classList.add('error');
+          isValid = false;
+        } else {
+          element.classList.remove('error');
+        }
+      });
+      
+      // Verificar WiFi
+      if (!document.getElementById('wifi').value.startsWith('WKVE-')) {
+        document.getElementById('wifi').classList.add('error');
+        document.getElementById('wifi-error').style.display = 'block';
+        isValid = false;
+      }
+      
+      // Verificar senha
+      if (document.getElementById('senha').value.length < 8 || 
+          document.getElementById('senha').value.length > 16) {
+        document.getElementById('senha').classList.add('error');
+        document.getElementById('senha-error').style.display = 'block';
+        isValid = false;
+      }
+      
+      if (!isValid) {
+        alert("Preencha todos os campos obrigatórios corretamente!");
+        return false;
+      }
+      
+      return true;
+    }
+
     // Gerar visualização
     function gerarScript() {
       const mensagem = formatarParaWhatsApp();
-      document.getElementById("resultado").innerText = mensagem;
+      if (mensagem) {
+        document.getElementById("resultado").innerText = mensagem;
+      }
     }
 
     // Copiar texto
     function copiarScript() {
       const mensagem = formatarParaWhatsApp();
-      navigator.clipboard.writeText(mensagem)
-        .then(() => {
-          const btn = document.querySelector('button[onclick="copiarScript()"]');
-          btn.innerHTML = '<i class="fas fa-check"></i> Copiado!';
-          setTimeout(() => {
-            btn.innerHTML = '<i class="far fa-copy"></i> Copiar';
-          }, 2000);
-        });
+      if (mensagem) {
+        navigator.clipboard.writeText(mensagem)
+          .then(() => {
+            const btn = document.querySelector('button[onclick="copiarScript()"]');
+            btn.innerHTML = '<i class="fas fa-check"></i> Copiado!';
+            setTimeout(() => {
+              btn.innerHTML = '<i class="far fa-copy"></i> Copiar';
+            }, 2000);
+          });
+      }
     }
 
     // Enviar por WhatsApp
     function enviarWhatsApp() {
       const mensagem = formatarParaWhatsApp();
-      const textoCodificado = encodeURIComponent(mensagem);
-      window.open(`https://wa.me/?text=${textoCodificado}`, '_blank');
+      if (mensagem) {
+        const textoCodificado = encodeURIComponent(mensagem);
+        window.open(`https://wa.me/?text=${textoCodificado}`, '_blank');
+      }
     }
-  </script>
+</script>
 </body>
 </html>
