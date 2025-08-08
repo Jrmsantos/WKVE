@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulário Técnico WKVE</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --azul-escuro: #001a33;
+      --azul-medio: #003366;
+      --degrade-fundo: linear-gradient(135deg, var(--azul-escuro) 0%, var(--azul-medio) 100%);
+      --cinza-escuro: #333333;
+      --cinza-medio: #666666;
+      --branco: #ffffff;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--degrade-fundo);
+      padding: 20px;
+      margin: 0;
+      color: var(--cinza-escuro);
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      background: var(--branco);
+      padding: 25px;
+      box-shadow: 0 8px 32px rgba(0, 20, 40, 0.3);
+      border-radius: 10px;
+      border-top: 5px solid var(--azul-medio);
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 24px;
+      margin-bottom: 25px;
+      color: var(--azul-escuro);
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--azul-medio);
+      text-transform: uppercase;
+    }
+
+    label {
+      font-weight: 600;
+      display: block;
+      margin-top: 18px;
+      color: var(--azul-escuro);
+      font-size: 15px;
+      text-transform: uppercase;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      margin-top: 8px;
+      box-sizing: border-box;
+      font-size: 15px;
+      border: 1px solid var(--cinza-medio);
+      border-radius: 6px;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      background-color: rgba(255, 255, 255, 0.9);
+    }
+
+    #senha, #observacao {
+      text-transform: none;
+    }
+
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 25px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      flex: 1;
+      min-width: 120px;
+      padding: 12px;
+      font-size: 15px;
+      cursor: pointer;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-transform: uppercase;
+      font-weight: bold;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    button:nth-child(1) {
+      background: var(--azul-escuro);
+    }
+
+    button:nth-child(2) {
+      background: var(--azul-medio);
+    }
+
+    button:nth-child(3) {
+      background: #0056b3;
+    }
+
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    #resultado {
+      white-space: pre-wrap;
+      background: rgba(248, 249, 250, 0.9);
+      padding: 20px;
+      margin-top: 30px;
+      border: 1px solid var(--cinza-medio);
+      border-radius: 8px;
+      font-size: 15px;
+      line-height: 1.6;
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .location-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 5px;
+    }
+
+    .location-buttons button {
+      padding: 8px 12px;
+      font-size: 14px;
+    }
+
+    #mapLink {
+      color: var(--azul-medio);
+      text-decoration: none;
+      font-size: 14px;
+      display: block;
+      margin-top: 5px;
+    }
+
+    @media (max-width: 600px) {
+      .button-group, .location-buttons {
+        flex-direction: column;
+      }
+      
+      body {
+        padding: 10px;
+      }
+      
+      .container {
+        padding: 15px;
+        margin: 10px auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Formulário de Atendimento Técnico - WKVE</h1>
+
+    <label for="atividade">Tipo de Atividade</label>
+    <select id="atividade" required onchange="mostrarCampoRecolhido()">
+      <option value="">Selecione</option>
+      <option value="ATIVAÇÃO">ATIVAÇÃO</option>
+      <option value="REPARO">REPARO</option>
+      <option value="REPARO + TROCA DE ONU">REPARO + TROCA DE ONU</option>
+      <option value="MUDANÇA DE ENDEREÇO">MUDANÇA DE ENDEREÇO</option>
+      <option value="MUDANÇA DE ENDEREÇO + TROCA DE ONU">MUDANÇA DE ENDEREÇO + TROCA DE ONU</option>
+    </select>
+
+    <label for="nome">Nome do Cliente</label>
+    <input type="text" id="nome" placeholder="Digite o nome completo" oninput="this.value = this.value.toUpperCase()">
+
+    <label for="os">Nº da OS</label>
+    <input type="text" id="os" placeholder="Número da ordem de serviço" oninput="this.value = this.value.toUpperCase()">
+
+    <label for="isp">ISP / ID</label>
+    <input type="text" id="isp" placeholder="Identificação do ISP" oninput="this.value = this.value.toUpperCase()">
+
+    <label for="plano">Plano</label>
+    <input type="text" id="plano" placeholder="Plano contratado" oninput="this.value = this.value.toUpperCase()">
+
+    <label for="pon">PON</label>
+    <input type="text" id="pon" placeholder="Porta óptica" oninput="this.value = this.value.toUpperCase()">
+
+    <label for="onu">ONU</label>
+    <input type="text" id="onu" placeholder="Número da ONU" oninput="this.value = this.value.toUpperCase()">
+
+    <label for="sinal">Sinal</label>
+    <input type="number" id="sinal" placeholder="Valor do sinal (será automaticamente negativo)" step="0.01">
+
+    <label for="wifi">Nome da Rede (Wi-Fi)</label>
+    <input type="text" id="wifi" placeholder="Nome da rede Wi-Fi" oninput="this.value = this.value.toUpperCase()">
+
+    <label for="senha">Senha do Wi-Fi</label>
+    <input type="text" id="senha" placeholder="Senha da rede Wi-Fi">
+
+    <label for="olt">OLT</label>
+    <input type="text" id="olt" placeholder="Terminal de linha óptica" oninput="this.value = this.value.toUpperCase()">
+
+    <label for="cto">CTO</label>
+    <input type="text" id="cto" placeholder="Nome da CTO" oninput="this.value = this.value.toUpperCase()">
+
+    <label for="localizacaoCTO">Localização da CTO</label>
+    <div class="location-buttons">
+      <button onclick="getLocation()"><i class="fas fa-map-marker-alt"></i> Obter Localização</button>
+      <button onclick="copyLocation()"><i class="fas fa-copy"></i> Copiar Coordenadas</button>
+    </div>
+    <input type="text" id="localizacaoCTO" placeholder="Coordenadas aparecerão aqui" readonly>
+    <a id="mapLink" href="#" target="_blank" style="display:none;"><i class="fas fa-map-marked-alt"></i> Ver no Mapa</a>
+
+    <label for="porta">Porta</label>
+    <input type="text" id="porta" placeholder="Porta utilizada" oninput="this.value = this.value.toUpperCase()">
+
+    <label for="endereco">Endereço</label>
+    <textarea id="endereco" placeholder="Endereço completo do cliente" oninput="this.value = this.value.toUpperCase()"></textarea>
+
+    <label for="tecnico">Técnico Responsável</label>
+    <input type="text" id="tecnico" placeholder="Seu nome" oninput="this.value = this.value.toUpperCase()">
+
+    <label for="material">Materiais Utilizados</label>
+    <textarea id="material" placeholder="Liste os materiais utilizados" oninput="this.value = this.value.toUpperCase()"></textarea>
+
+    <div id="recolhidoContainer" class="hidden">
+      <label for="materialRecolhido">Material Recolhido</label>
+      <textarea id="materialRecolhido" placeholder="Liste os materiais recolhidos" oninput="this.value = this.value.toUpperCase()"></textarea>
+    </div>
+
+    <label for="observacao">Observações</label>
+    <textarea id="observacao" placeholder="Adicione observações relevantes"></textarea>
+
+    <div class="button-group">
+      <button onclick="gerarScript()">
+        <i class="fas fa-code"></i> Gerar Script
+      </button>
+      <button onclick="copiarScript()">
+        <i class="far fa-copy"></i> Copiar
+      </button>
+      <button onclick="enviarWhatsApp()">
+        <i class="fab fa-whatsapp"></i> WhatsApp
+      </button>
+    </div>
+
+    <div id="resultado"></div>
+  </div>
+
+  <script>
+    // Garante que o sinal sempre seja negativo
+    document.getElementById('sinal').addEventListener('input', function() {
+      let value = this.value;
+      if (value && !value.startsWith('-')) {
+        value = value.replace(/^-/, '');
+        if (value !== '') {
+          this.value = '-' + value;
+        }
+      }
+    });
+
+    // Mostrar/ocultar campo de material recolhido
+    function mostrarCampoRecolhido() {
+      const atividade = document.getElementById("atividade").value;
+      const container = document.getElementById("recolhidoContainer");
+      const atividadesComRecolhimento = ["REPARO + TROCA DE ONU", "MUDANÇA DE ENDEREÇO + TROCA DE ONU"];
+      
+      container.classList.toggle("hidden", !atividadesComRecolhimento.includes(atividade));
+      if (container.classList.contains("hidden")) {
+        document.getElementById("materialRecolhido").value = "";
+      }
+    }
+
+    // Geolocalização automática
+    function getLocation() {
+      const locationInput = document.getElementById("localizacaoCTO");
+      const mapLink = document.getElementById("mapLink");
+      
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const lat = position.coords.latitude.toFixed(6);
+            const lng = position.coords.longitude.toFixed(6);
+            locationInput.value = `${lat}, ${lng}`;
+            mapLink.href = `https://www.google.com/maps?q=${lat},${lng}`;
+            mapLink.style.display = "inline-block";
+          },
+          (error) => {
+            alert("Erro ao obter localização: " + error.message);
+          },
+          { enableHighAccuracy: true, timeout: 10000 }
+        );
+      } else {
+        alert("Geolocalização não suportada neste navegador.");
+      }
+    }
+
+    // Copiar coordenadas
+    function copyLocation() {
+      const coords = document.getElementById("localizacaoCTO").value;
+      if (coords) {
+        navigator.clipboard.writeText(coords);
+        alert("Coordenadas copiadas!");
+      } else {
+        alert("Nenhuma localização disponível para copiar.");
+      }
+    }
+
+    // Formatar para WhatsApp (sem emojis)
+    function formatarParaWhatsApp() {
+      const get = id => document.getElementById(id).value.trim();
+      const timestamp = new Date().toLocaleString('pt-BR');
+
+      let mensagem = "*RELATÓRIO TÉCNICO WKVE*\n\n";
+      
+      // Informações básicas
+      mensagem += `*ATIVIDADE:* ${get("atividade")}\n`;
+      mensagem += `*CLIENTE:* ${get("nome")}\n`;
+      mensagem += `*OS Nº:* ${get("os")}\n`;
+      mensagem += `*ISP/ID:* ${get("isp")}\n`;
+      mensagem += `*PLANO:* ${get("plano")}\n`;
+      mensagem += `*PON:* ${get("pon")}\n`;
+      mensagem += `*ONU:* ${get("onu")}\n`;
+      mensagem += `*SINAL:* ${get("sinal")}\n`;
+      mensagem += `*WI-FI:* ${get("wifi")}\n`;
+      mensagem += `*SENHA:* ${get("senha")}\n`;
+      mensagem += `*OLT:* ${get("olt")}\n`;
+      mensagem += `*CTO:* ${get("cto")}\n`;
+      mensagem += `*LOCALIZAÇÃO CTO:* ${get("localizacaoCTO")}\n`;
+      mensagem += `*LINK MAPA:* ${document.getElementById("mapLink").href}\n`;
+      mensagem += `*PORTA:* ${get("porta")}\n`;
+      mensagem += `*ENDEREÇO:* ${get("endereco")}\n`;
+      mensagem += `*TÉCNICO:* ${get("tecnico")}\n\n`;
+      
+      // Materiais
+      mensagem += `*MATERIAIS UTILIZADOS:*\n${get("material")}\n\n`;
+      
+      // Material recolhido (se aplicável)
+      if (!document.getElementById("recolhidoContainer").classList.contains("hidden")) {
+        mensagem += `*MATERIAL RECOLHIDO:*\n${get("materialRecolhido")}\n\n`;
+      }
+      
+      // Observações
+      mensagem += `*OBSERVAÇÕES:*\n${get("observacao")}\n\n`;
+      mensagem += `*DATA/HORA:* ${timestamp}`;
+
+      return mensagem;
+    }
+
+    // Gerar visualização
+    function gerarScript() {
+      const mensagem = formatarParaWhatsApp();
+      document.getElementById("resultado").innerText = mensagem;
+    }
+
+    // Copiar texto
+    function copiarScript() {
+      const mensagem = formatarParaWhatsApp();
+      navigator.clipboard.writeText(mensagem)
+        .then(() => {
+          const btn = document.querySelector('button[onclick="copiarScript()"]');
+          btn.innerHTML = '<i class="fas fa-check"></i> Copiado!';
+          setTimeout(() => {
+            btn.innerHTML = '<i class="far fa-copy"></i> Copiar';
+          }, 2000);
+        });
+    }
+
+    // Enviar por WhatsApp
+    function enviarWhatsApp() {
+      const mensagem = formatarParaWhatsApp();
+      const textoCodificado = encodeURIComponent(mensagem);
+      window.open(`https://wa.me/?text=${textoCodificado}`, '_blank');
+    }
+  </script>
+</body>
+</html>
