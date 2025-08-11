@@ -212,6 +212,28 @@
         margin: 10px auto;
       }
     }
+    .predefined-obs {
+  margin-top: 5px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.predefined-obs button {
+  background: #f0f0f0;
+  color: #003366;
+  border: 1px solid #003366;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.predefined-obs button:hover {
+  background: #003366;
+  color: white;
+}
   </style>
 </head>
 <body>
@@ -360,8 +382,15 @@
       <textarea id="materialRecolhido" class="uppercase" placeholder="Liste os materiais recolhidos"></textarea>
     </div>
 
-    <label for="observacao">Observações</label>
-    <textarea id="observacao" placeholder="Adicione observações relevantes"></textarea>
+<label for="observacao">Observações</label>
+<textarea id="observacao" placeholder="Adicione observações relevantes"></textarea>
+
+<!-- Botão de observação pré-definida -->
+<div class="predefined-obs">
+  <button onclick="addPredefinedObservation()">
+    <i class="fas fa-plus-circle"></i> Adicionar observação padrão
+  </button>
+</div>
 
     <div class="button-group">
       <button onclick="gerarScript()">
@@ -772,6 +801,16 @@ function mostrarCampoRecolhido() {
         window.open(`https://wa.me/?text=${textoCodificado}`, '_blank');
       }
     }
+    function addPredefinedObservation() {
+  const obsField = document.getElementById("observacao");
+  const predefinedText = "FOI INFORMADO AO CLIENTE COMO FUNCIONA A REDE 2.4G E 5G";
+  
+  // Se já contiver o texto, não adiciona de novo
+  if (!obsField.value.includes(predefinedText)) {
+    // Adiciona com quebra de linha se já houver conteúdo
+    obsField.value += (obsField.value ? "\n\n" : "") + predefinedText;
+  }
+}
   </script>
 </body>
 </html>
