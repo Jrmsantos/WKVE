@@ -271,8 +271,9 @@
 
     <label for="onu">ONU</label>
    <select id="onu">
-  <option value="">CHIMA 7752</option>
-<option value="CHIMA 7755">CHIMA 7755</option>
+  <option value="">Selecione a ONU</option>
+  <option value="CHIMA 7752">CHIMA 7752</option>
+  <option value="CHIMA 7755">CHIMA 7755</option>
   <option value="CHIMA 7755">CHIMA 7755</option>
   <option value="CHIMA 7758V1">CHIMA 7758V1</option>
   <option value="CHIMA 7758V2">CHIMA 7758V2</option>
@@ -646,69 +647,66 @@ function mostrarCampoRecolhido() {
     }
 
     // Formatar para WhatsApp (sem emojis)
-    function formatarParaWhatsApp() {
-      const get = id => {
-        const element = document.getElementById(id);
-        if (!element) return '';
-        
-        // Verifica se o campo deve ser convertido para maiúsculas
-        if (element.classList.contains('uppercase')) {
-          return formatarCampoUpperCase(element.value.trim());
-        }
-        return element.value.trim();
-      };
-      
-      const timestamp = new Date().toLocaleString('pt-BR');
-
-      // Verificar campos obrigatórios
-      if (!validarCampos()) {
-        return false;
-      }
-
-      let mensagem = "*RELATÓRIO TÉCNICO WKVE*\n\n";
-      
-      // Informações básicas (campos em maiúsculas serão convertidos)
-      mensagem += `*ATIVIDADE:* ${get("atividade")}\n`;
-      mensagem += `*CLIENTE:* ${get("nome")}\n`;
-      mensagem += `*OS Nº:* ${get("os")}\n`;
-      mensagem += `*ISP/ID:* ${get("isp")}\n`;
-      mensagem += `*PLANO:* ${get("plano")}\n`;
-      mensagem += `*PON:* ${get("pon")}\n`;
-      
-      // Mostrar ONU e router se aplicável
-      const checkbox = document.getElementById("onuRouterCheckbox");
-      if (checkbox.checked) {
-        mensagem += `*ONU:* ${get("onu")}\n`;
-        mensagem += `*ROUTER ADICIONAL:* ${get("router")}\n`;
-      } else {
-        mensagem += `*ONU:* ${get("onu")}\n`;
-      }
-      
-      mensagem += `*SINAL:* ${get("sinal")}\n`;
-      mensagem += `*WI-FI:* ${get("wifi")}\n`;
-      mensagem += `*SENHA:* ${get("senha")}\n`;
-      mensagem += `*OLT:* ${get("olt")}\n`;
-      mensagem += `*CTO:* ${get("cto")}\n`;
-      mensagem += `*LOCALIZAÇÃO CTO:* ${get("localizacaoCTO")}\n`;
-      mensagem += `*LINK MAPA:* ${document.getElementById("mapLink").href}\n`;
-      mensagem += `*PORTA:* ${get("porta")}\n`;
-      mensagem += `*ENDEREÇO:* ${get("endereco")}\n`;
-      mensagem += `*TÉCNICO:* ${get("tecnico")}\n\n`;
-      
-      // Materiais (convertido para maiúsculas)
-      mensagem += `*MATERIAIS UTILIZADOS:*\n${get("material")}\n\n`;
-      
-      // Material recolhido (se aplicável, convertido para maiúsculas)
-      if (!document.getElementById("recolhidoContainer").classList.contains("hidden")) {
-        mensagem += `*MATERIAL RECOLHIDO:*\n${get("materialRecolhido")}\n\n`;
-      }
-      
-      // Observações (não convertido para maiúsculas)
-      mensagem += `*OBSERVAÇÕES:*\n${document.getElementById("observacao").value.trim()}\n\n`;
-      mensagem += `*DATA/HORA:* ${timestamp}`;
-
-      return mensagem;
+function formatarParaWhatsApp() {
+  const get = id => {
+    const element = document.getElementById(id);
+    if (!element) return '';
+    if (element.classList.contains('uppercase')) {
+      return formatarCampoUpperCase(element.value.trim());
     }
+    return element.value.trim();
+  };
+
+  const timestamp = new Date().toLocaleString('pt-BR');
+
+  if (!validarCampos()) {
+    return false;
+  }
+
+  let mensagem = "*RELATÓRIO TÉCNICO WKVE*\n\n";
+  
+  // 1º: ATIVIDADE (mantida como primeiro campo)
+  mensagem += `*ATIVIDADE:* ${get("atividade")}\n\n`;
+  
+  // 2º: MATERIAIS (logo após atividade)
+  mensagem += `*MATERIAIS UTILIZADOS:*\n${get("material")}\n\n`;
+  
+  // Material recolhido (se aplicável)
+  if (!document.getElementById("recolhidoContainer").classList.contains("hidden")) {
+    mensagem += `*MATERIAL RECOLHIDO:*\n${get("materialRecolhido")}\n\n`;
+  }
+
+  // 3º: Demais campos (ordem original)
+  mensagem += `*CLIENTE:* ${get("nome")}\n`;
+  mensagem += `*OS Nº:* ${get("os")}\n`;
+  mensagem += `*ISP/ID:* ${get("isp")}\n`;
+  mensagem += `*PLANO:* ${get("plano")}\n`;
+  mensagem += `*PON:* ${get("pon")}\n`;
+  
+  const checkbox = document.getElementById("onuRouterCheckbox");
+  if (checkbox.checked) {
+    mensagem += `*ONU:* ${get("onu")}\n`;
+    mensagem += `*ROUTER ADICIONAL:* ${get("router")}\n`;
+  } else {
+    mensagem += `*ONU:* ${get("onu")}\n`;
+  }
+  
+  mensagem += `*SINAL:* ${get("sinal")}\n`;
+  mensagem += `*WI-FI:* ${get("wifi")}\n`;
+  mensagem += `*SENHA:* ${get("senha")}\n`;
+  mensagem += `*OLT:* ${get("olt")}\n`;
+  mensagem += `*CTO:* ${get("cto")}\n`;
+  mensagem += `*LOCALIZAÇÃO CTO:* ${get("localizacaoCTO")}\n`;
+  mensagem += `*LINK MAPA:* ${document.getElementById("mapLink").href}\n`;
+  mensagem += `*PORTA:* ${get("porta")}\n`;
+  mensagem += `*ENDEREÇO:* ${get("endereco")}\n`;
+  mensagem += `*TÉCNICO:* ${get("tecnico")}\n\n`;
+  
+  mensagem += `*OBSERVAÇÕES:*\n${document.getElementById("observacao").value.trim()}\n\n`;
+  mensagem += `*DATA/HORA:* ${timestamp}`;
+
+  return mensagem;
+}
 
     function validarCampos() {
       let isValid = true;
@@ -772,12 +770,12 @@ function mostrarCampoRecolhido() {
     }
 
     // Gerar visualização
-    function gerarScript() {
-      const mensagem = formatarParaWhatsApp();
-      if (mensagem) {
-        document.getElementById("resultado").innerText = mensagem;
-      }
-    }
+  function gerarScript() {
+  const mensagem = formatarParaWhatsApp();
+  if (mensagem) {
+    document.getElementById("resultado").innerText = mensagem;
+  }
+}
 
     // Copiar texto
     function copiarScript() {
@@ -815,5 +813,4 @@ function mostrarCampoRecolhido() {
   </script>
 </body>
 </html>
-
 
