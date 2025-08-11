@@ -234,6 +234,97 @@
   background: #003366;
   color: white;
 }
+/* Modal de Alerta Personalizado */
+.alert-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+
+.alert-content {
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  animation: fadeIn 0.3s;
+  border-top: 5px solid #ff5252;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.alert-icon {
+  font-size: 50px;
+  color: #ff5252;
+  margin-bottom: 15px;
+}
+
+.alert-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.alert-message {
+  font-size: 16px;
+  margin-bottom: 20px;
+  color: #555;
+}
+
+.alert-button {
+  background: #ff5252;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+
+.alert-button:hover {
+  background: #ff0000;
+  transform: translateY(-2px);
+}
+.sinal-status {
+  margin-top: 5px;
+  padding: 8px;
+  border-radius: 4px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.sinal-status.alerta {
+  background-color: #fff3f3;
+  border-left: 4px solid #ff5252;
+  color: #ff5252;
+  animation: pulse 2s infinite;
+}
+
+.sinal-status.ok {
+  background-color: #f3fff3;
+  border-left: 4px solid #4caf50;
+  color: #4caf50;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.8; }
+  50% { opacity: 1; }
+  100% { opacity: 0.8; }
+}
   </style>
 </head>
 <body>
@@ -298,9 +389,10 @@
          <option value="HUAWEI AX2">TPLINK EX141</option>
       </select>
     </div>
-
-    <label for="sinal">Sinal</label>
-    <input type="number" id="sinal" class="numeric" placeholder="Valor do sinal dBm" step="0.01">
+<label for="sinal">Sinal</label>
+<input type="number" id="sinal" class="numeric" placeholder="Valor do sinal dBm" step="0.01">
+<!-- Novo campo para status do sinal -->
+<div id="sinalStatus" class="sinal-status hidden"></div>
 
     <label for="wifi">Nome da Rede (Wi-Fi)</label>
     <input type="text" id="wifi" class="uppercase" placeholder="WKVE-" value="WKVE-" oninput="formatarWifi()">
@@ -408,7 +500,17 @@
 
     <div id="resultado"></div>
   </div>
-
+<!-- Modal de Alerta -->
+<div id="sinalAlert" class="alert-modal">
+  <div class="alert-content">
+    <div class="alert-icon">
+      <i class="fas fa-exclamation-triangle"></i>
+    </div>
+    <div class="alert-title">ATENÇÃO!</div>
+    <div class="alert-message" id="alertMessage"></div>
+    <button class="alert-button" onclick="closeAlert()">ENTENDI</button>
+  </div>
+</div>
   <script>
     // Funções para restringir entrada de caracteres (funciona em mobile e desktop)
     function setupInputRestrictions() {
@@ -573,6 +675,7 @@
         }
       }
     });
+    
 
     // Mostrar/ocultar campo de material recolhido
 function mostrarCampoRecolhido() {
@@ -691,7 +794,14 @@ function formatarParaWhatsApp() {
     mensagem += `*ONU:* ${get("onu")}\n`;
   }
   
-  mensagem += `*SINAL:* ${get("sinal")}\n`;
+  // Campo Sinal com verificação de qualidade
+  const sinalValue = parseFloat(get("sinal"));
+  mensagem += `*SINAL:* ${get("sinal")} dBm`;
+  if (sinalValue < -28) {
+    mensagem += ` (SINAL FRACO - FORA DO PADRÃO)`;
+  }
+  mensagem += `\n`;
+  
   mensagem += `*WI-FI:* ${get("wifi")}\n`;
   mensagem += `*SENHA:* ${get("senha")}\n`;
   mensagem += `*OLT:* ${get("olt")}\n`;
@@ -810,6 +920,58 @@ function formatarParaWhatsApp() {
     obsField.value += (obsField.value ? "\n\n" : "") + predefinedText;
   }
 }
+// Mostrar alerta personalizado
+function showAlert(message) {
+  const modal = document.getElementById("sinalAlert");
+  document.getElementById("alertMessage").innerHTML = message;
+  modal.style.display = "flex";
+  document.body.style.overflow = "hidden"; // Impede scroll
+  
+  // Adiciona efeito sonoro
+  if (typeof Audio !== "undefined") {
+    new Audio('https://assets.mixkit.co/sfx/preview/mixkit-alert-quick-notice-1711.mp3').play();
+  }
+}
+
+// Fechar alerta
+function closeAlert() {
+  document.getElementById("sinalAlert").style.display = "none";
+  document.body.style.overflow = "auto";
+}
+
+document.getElementById("sinal").addEventListener("change", function() {
+  const sinalValue = parseFloat(this.value);
+  const statusElement = document.getElementById("sinalStatus");
+  
+  if (sinalValue < -28) {
+    statusElement.innerHTML = `
+      <i class="fas fa-exclamation-triangle"></i> 
+      SINAL FRACO: ${this.value} dBm (Padrão: -28 dBm)
+    `;
+    statusElement.className = "sinal-status alerta";
+    
+    // Efeitos visuais
+    this.classList.add("sinal-alerta");
+    statusElement.classList.remove("hidden");
+    
+  } else if (!isNaN(sinalValue)) {
+    statusElement.innerHTML = `
+      <i class="fas fa-check-circle"></i> 
+      SINAL DENTRO DO PADRÃO
+    `;
+    statusElement.className = "sinal-status ok";
+    this.classList.remove("sinal-alerta");
+    statusElement.classList.remove("hidden");
+    
+    // Remove após 5 segundos se estiver OK
+    setTimeout(() => {
+      statusElement.classList.add("hidden");
+    }, 5000);
+  } else {
+    statusElement.classList.add("hidden");
+    this.classList.remove("sinal-alerta");
+  }
+});
   </script>
 </body>
 </html>
