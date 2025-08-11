@@ -219,15 +219,15 @@
     <h1>Formulário de Atendimento Técnico - WKVE</h1>
 
     <label for="atividade">Tipo de Atividade</label>
-    <select id="atividade" required onchange="mostrarCampoRecolhido()">
-      <option value="">Selecione</option>
-      <option value="ATIVAÇÃO">ATIVAÇÃO</option>
-      <option value="REPARO">REPARO</option>
-      <option value="REPARO + TROCA DE ONU">REPARO + TROCA DE ONU</option>
-      <option value="MUDANÇA DE ENDEREÇO">MUDANÇA DE ENDEREÇO</option>
-      <option value="MUDANÇA DE ENDEREÇO + TROCA DE ONU">MUDANÇA DE ENDEREÇO + TROCA DE ONU</option>
-    </select>
-
+<select id="atividade" required onchange="mostrarCampoRecolhido()">
+  <option value="">Selecione</option>
+  <option value="ATIVAÇÃO">ATIVAÇÃO</option>
+  <option value="REPARO">REPARO</option>
+  <option value="REPARO + TROCA DE ONU">REPARO + TROCA DE ONU</option>
+  <option value="UPGRADE DE PLANO">UPGRADE DE PLANO</option>
+  <option value="MUDANÇA DE ENDEREÇO">MUDANÇA DE ENDEREÇO</option>
+  <option value="MUDANÇA DE ENDEREÇO + TROCA DE ONU">MUDANÇA DE ENDEREÇO + TROCA DE ONU</option>
+</select>
     <label for="nome">Nome do Cliente</label>
     <input type="text" id="nome" class="uppercase" placeholder="Digite o nome completo" pattern="[A-Za-zÀ-ú\s]+" title="Somente letras são permitidas">
     <div class="error-message" id="nome-error">Somente letras são permitidas</div>
@@ -544,17 +544,20 @@
     });
 
     // Mostrar/ocultar campo de material recolhido
-    function mostrarCampoRecolhido() {
-      const atividade = document.getElementById("atividade").value;
-      const container = document.getElementById("recolhidoContainer");
-      const atividadesComRecolhimento = ["REPARO + TROCA DE ONU", "MUDANÇA DE ENDEREÇO + TROCA DE ONU"];
-      
-      container.classList.toggle("hidden", !atividadesComRecolhimento.includes(atividade));
-      if (container.classList.contains("hidden")) {
-        document.getElementById("materialRecolhido").value = "";
-      }
-    }
-
+function mostrarCampoRecolhido() {
+  const atividade = document.getElementById("atividade").value;
+  const container = document.getElementById("recolhidoContainer");
+  const atividadesComRecolhimento = [
+    "REPARO + TROCA DE ONU",
+    "UPGRADE DE PLANO",  
+    "MUDANÇA DE ENDEREÇO + TROCA DE ONU"
+  ];
+  
+  container.classList.toggle("hidden", !atividadesComRecolhimento.includes(atividade));
+  if (container.classList.contains("hidden")) {
+    document.getElementById("materialRecolhido").value = "";
+  }
+}
     // Mostrar/ocultar campo de router obrigatório
     function mostrarRouterObrigatorio() {
       const checkbox = document.getElementById("onuRouterCheckbox");
