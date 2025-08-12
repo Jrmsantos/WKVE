@@ -162,7 +162,7 @@
       font-size: 14px;
     }
 
-    #mapLink {
+    #mapLink, #mapLinkCliente {
       color: var(--azul-medio);
       text-decoration: none;
       font-size: 14px;
@@ -433,8 +433,8 @@
 
     <label for="localizacaoCTO">Localização da CTO</label>
     <div class="location-buttons">
-      <button onclick="getLocation()"><i class="fas fa-map-marker-alt"></i> Obter Localização</button>
-      <button onclick="copyLocation()"><i class="fas fa-copy"></i> Copiar Coordenadas</button>
+      <button onclick="getLocation('localizacaoCTO', 'mapLink')"><i class="fas fa-map-marker-alt"></i> Obter Localização CTO</button>
+      <button onclick="copyLocation('localizacaoCTO')"><i class="fas fa-copy"></i> Copiar Coordenadas CTO</button>
     </div>
     <input type="text" id="localizacaoCTO" placeholder="Coordenadas aparecerão aqui" readonly>
     <a id="mapLink" href="#" target="_blank" style="display:none;"><i class="fas fa-map-marked-alt"></i> Ver no Mapa</a>
@@ -464,6 +464,14 @@
 
     <label for="endereco">Endereço</label>
     <textarea id="endereco" class="uppercase" placeholder="Endereço completo do cliente"></textarea>
+    
+    <label for="localizacaoCliente">Localização do Cliente</label>
+    <div class="location-buttons">
+      <button onclick="getLocation('localizacaoCliente', 'mapLinkCliente')"><i class="fas fa-map-marker-alt"></i> Obter Localização Cliente</button>
+      <button onclick="copyLocation('localizacaoCliente')"><i class="fas fa-copy"></i> Copiar Coordenadas Cliente</button>
+    </div>
+    <input type="text" id="localizacaoCliente" placeholder="Coordenadas aparecerão aqui" readonly>
+    <a id="mapLinkCliente" href="#" target="_blank" style="display:none;"><i class="fas fa-map-marked-alt"></i> Ver no Mapa</a>
 
     <label for="tecnico">Técnico Responsável</label>
     <input type="text" id="tecnico" class="uppercase" placeholder="Seu nome">
@@ -706,10 +714,10 @@ function mostrarCampoRecolhido() {
       }
     }
 
-    // Geolocalização automática
-    function getLocation() {
-      const locationInput = document.getElementById("localizacaoCTO");
-      const mapLink = document.getElementById("mapLink");
+    // Geolocalização automática - agora genérica para qualquer campo
+    function getLocation(inputId, mapLinkId) {
+      const locationInput = document.getElementById(inputId);
+      const mapLink = document.getElementById(mapLinkId);
       
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
@@ -730,9 +738,9 @@ function mostrarCampoRecolhido() {
       }
     }
 
-    // Copiar coordenadas
-    function copyLocation() {
-      const coords = document.getElementById("localizacaoCTO").value;
+    // Copiar coordenadas - agora genérica para qualquer campo
+    function copyLocation(inputId) {
+      const coords = document.getElementById(inputId).value;
       if (coords) {
         navigator.clipboard.writeText(coords);
         alert("Coordenadas copiadas!");
@@ -807,7 +815,9 @@ function formatarParaWhatsApp() {
   mensagem += `*OLT:* ${get("olt")}\n`;
   mensagem += `*CTO:* ${get("cto")}\n`;
   mensagem += `*LOCALIZAÇÃO CTO:* ${get("localizacaoCTO")}\n`;
-  mensagem += `*LINK MAPA:* ${document.getElementById("mapLink").href}\n`;
+  mensagem += `*LINK MAPA CTO:* ${document.getElementById("mapLink").href}\n`;
+  mensagem += `*LOCALIZAÇÃO CLIENTE:* ${get("localizacaoCliente")}\n`;
+  mensagem += `*LINK MAPA CLIENTE:* ${document.getElementById("mapLinkCliente").href}\n`;
   mensagem += `*PORTA:* ${get("porta")}\n`;
   mensagem += `*ENDEREÇO:* ${get("endereco")}\n`;
   mensagem += `*TÉCNICO:* ${get("tecnico")}\n\n`;
@@ -975,4 +985,5 @@ document.getElementById("sinal").addEventListener("change", function() {
   </script>
 </body>
 </html>
+
 
